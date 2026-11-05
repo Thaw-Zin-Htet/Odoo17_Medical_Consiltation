@@ -6,7 +6,6 @@ class Department(models.Model):
 
     name = fields.Char(string='Name', required=True, tracking=True)
     description = fields.Text(string='Description', tracking=True)
-    doctor_ids = fields.One2many('consultation.doctor', 'department_id', string='Doctors')
 
 class Doctor(models.Model):
     _name = 'consultation.doctor'
@@ -15,5 +14,7 @@ class Doctor(models.Model):
 
     name = fields.Char(string='Name', required=True, tracking=True)
     department_id = fields.Many2one('consultation.department', string='Department', tracking=True)
-    patient_ids = fields.Many2many('consultation.patient', string='Patients', tracking=True)
+    specialization = fields.Char(string='Specialization', tracking=True)
+    consultation_fee = fields.Float(string='Consultation Fee', tracking=True)
+    user_id = fields.Many2one('res.users', string='User', tracking=True)
     

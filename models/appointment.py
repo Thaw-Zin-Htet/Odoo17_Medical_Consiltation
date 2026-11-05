@@ -28,21 +28,37 @@ class Appointment(models.Model):
         ('cancelled', 'Cancelled')
     ], string='Status', default='draft', tracking=True)
 
+    def action_confirm(self):
+        for rec in self:
+            rec.state = 'confirmed'
+
+    def action_done(self):
+        for rec in self:
+            rec.state = 'done'
+
+    def action_cancel(self):
+        for rec in self:
+            rec.state = 'cancelled'
+
+    def action_draft(self):
+        for rec in self:
+            rec.state = 'draft'
+
     @api.model_create_multi
-    def create(self,vals_list):
+    def create(self, vals_list):
         for vals in vals_list:
-            if vals.get('name','New') == 'New':
+            if vals.get('name', 'New') == 'New':
                 vals['name'] = self.env['ir.sequence'].next_by_code('consultation.appointment') or 'New'
 
             if vals.get('consultation_type') == 'video_call' and not vals.get('meeting_url'):
-                unique_token =uuid.uuid4().hex[:8]
+                unique_token = uuid.uuid4().hex[:8]
                 vals['meeting_url'] = f"https://meet.jit.si/ClinicConsultation-{unique_token}"
     
-        return super(Appointment,self).create(vals_list)
+        return super(Appointment, self).create(vals_list)
 
     @api.onchange('consultation_type')
     def _onchange_consultation_type(self):
-        if self.consultation_type== 'video_call':
+        if self.consultation_type == 'video_call':
             unique_token = uuid.uuid4().hex[:8]
             self.meeting_url = f"https://meet.jit.si/ClinicConsultation-{unique_token}"
         elif self.consultation_type != 'video_call':

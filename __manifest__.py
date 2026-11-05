@@ -18,18 +18,19 @@ Long description of module's purpose
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','mail','account'],
+    'depends': ['base', 'mail', 'account'],
 
     # always loaded
     'data': [
         'security/ir.model.access.csv',
         'data/sequence_data.xml',
-        # 'views/views.xml',
-        # 'views/templates.xml',
+        'views/appointment_views.xml',
+        'views/patient_views.xml',
+        'views/doctor_views.xml',
+        'views/menu_views.xml',
     ],
 
     'installable': True,
     'application': True,
     'auto_install': False,
 }
-

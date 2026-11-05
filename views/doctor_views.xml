@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Doctor Form View -->
+    <record id="view_consultation_doctor_form" model="ir.ui.view">
+        <field name="name">consultation.doctor.form</field>
+        <field name="model">consultation.doctor</field>
+        <field name="arch" type="xml">
+            <form string="Doctor Form">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Dr.Unknown..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Professional Information">
+                            <field name="department_id"/>
+                            <field name="specialization"/>
+                        </group>
+                        <group string="Contact Details">
+                            <field name="consultation_fee"/>
+                            <field name="user_id"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+    <!-- Doctor Tree View -->
+    <record id="view_consultation_doctor_tree" model="ir.ui.view">
+        <field name="name">consultation.doctor.tree</field>
+        <field name="model">consultation.doctor</field>
+        <field name="arch" type="xml">
+            <tree string="Doctor Tree">
+                <field name="name"/>
+                <field name="department_id"/>
+                <field name="specialization"/>
+                <field name="consultation_fee"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Department Tree/Form View -->
+    <record id="view_consultation_department_tree" model="ir.ui.view">
+        <field name="name">consultation.department.tree</field>
+        <field name="model">consultation.department</field>
+        <field name="arch" type="xml">
+            <tree string="Department Tree">
+                <field name="name"/>
+                <field name="description"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_consultation_doctor" model="ir.actions.act_window">
+        <field name="name">Doctors</field>
+        <field name="res_model">consultation.doctor</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first doctor
+            </p>
+        </field>
+    </record>
+
+    <record id="action_consultation_department" model="ir.actions.act_window">
+        <field name="name">Departments</field>
+        <field name="res_model">consultation.department</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first department
+            </p>
+        </field>
+    </record>
+</odoo>
