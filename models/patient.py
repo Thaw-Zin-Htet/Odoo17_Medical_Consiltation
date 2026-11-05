@@ -27,6 +27,7 @@ class Patient(models.Model):
     phone = fields.Char(string='Phone Number', tracking=True)
     email = fields.Char(string='Email')
     address = fields.Text(string='Address', tracking=True)
+    doctor_id = fields.Many2one('consultation.doctor', string='Doctor', tracking=True)
     appointment_ids = fields.One2many('consultation.appointment', 'patient_id', string='Appointments')
     appointment_count = fields.Integer(string='Appointment Count', compute='_compute_appointment_count')
 

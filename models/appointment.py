@@ -1,4 +1,5 @@
 import uuid
+from datetime import timedelta
 from odoo import models, fields, api
 
 class Appointment(models.Model):
@@ -68,10 +69,10 @@ class Appointment(models.Model):
     @api.onchange('doctor_id')
     def _onchange_doctor_id(self):
         if self.doctor_id:
-            self.department_id=self.doctor_id.department_id
+            self.department_id = self.doctor_id.department_id
 
-    # Business Logic:Overlapping Prevention
-    @api.constrains('doctor_id', 'appointment_date','state')
+    # Business Logic: Overlapping Prevention
+    @api.constrains('doctor_id', 'appointment_date', 'state')
     def _check_overlapping_appointments(self):
         for appointment in self:
             if appointment.appointment_date and appointment.doctor_id and appointment.state != 'cancelled':
@@ -91,7 +92,7 @@ class Appointment(models.Model):
             if appointment.appointment_date < fields.Datetime.now():
                 raise models.ValidationError("You cannot schedule an appointment in the past. Please choose a future date and time.")
 
-    # Business Logic:Department Consistency
+    # Business Logic: Department Consistency
     @api.constrains('doctor_id', 'department_id')
     def _check_department_consistency(self):
         for appointment in self:
@@ -105,4 +106,4 @@ class Appointment(models.Model):
         appointments = self.search([('state', '=', 'confirmed')])
         for appointment in appointments:
             if appointment.appointment_date and appointment.appointment_date < fields.Datetime.now() - timedelta(days=1):
-                appointment.state = 'done' 
+                appointment.state = 'done'

@@ -1,15 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!-- Root Menu -->
-    <menuitem id="menu_consultation_root" name="Consultation" sequence="10"/>
+    <menuitem id="menu_consultation_root" 
+              name="Consultation" 
+              sequence="10"
+              groups="group_consultation_receptionist,group_consultation_doctor,group_consultation_manager"/>
     
     <!-- Top Level Sub Menu -->
-    <menuitem id="menu_consultation_patient" name="Patients" parent="menu_consultation_root" sequence="20" action="action_consultation_patient"/>
-    <menuitem id="menu_consultation_appointment" name="Appointments" parent="menu_consultation_root" sequence="10" action="action_consultation_appointment"/>
-    
-    <menuitem id="menu_consultation_configration" name="Configuration" parent="menu_consultation_root" sequence="30"/>
-    <menuitem id="menu_consultation_doctor" name="Doctors" parent="menu_consultation_configration" sequence="10" action="action_consultation_doctor"/>
-    <menuitem id="menu_consultation_department" name="Departments" parent="menu_consultation_configration" sequence="20" action="action_consultation_department"/>
+    <menuitem id="menu_consultation_appointment" 
+              name="Appointments" 
+              parent="menu_consultation_root" 
+              sequence="10" 
+              action="action_consultation_appointment"
+              groups="group_consultation_receptionist,group_consultation_doctor,group_consultation_manager"/>
 
+    <menuitem id="menu_consultation_patient" 
+              name="Patients" 
+              parent="menu_consultation_root" 
+              sequence="20" 
+              action="action_consultation_patient"
+              groups="group_consultation_receptionist,group_consultation_doctor,group_consultation_manager"/>
+    
+    <!-- Configuration Menu (Manager only) -->
+    <menuitem id="menu_consultation_configration" 
+              name="Configuration" 
+              parent="menu_consultation_root" 
+              sequence="30"
+              groups="group_consultation_manager"/>
+
+    <menuitem id="menu_consultation_doctor" 
+              name="Doctors" 
+              parent="menu_consultation_configration" 
+              sequence="10" 
+              action="action_consultation_doctor"
+              groups="group_consultation_manager"/>
+
+    <menuitem id="menu_consultation_department" 
+              name="Departments" 
+              parent="menu_consultation_configration" 
+              sequence="20" 
+              action="action_consultation_department"
+              groups="group_consultation_manager"/>
 
 </odoo>

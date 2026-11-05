@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Module Category -->
+    <record id="module_category_consultation" model="ir.module.category">
+        <field name="name">Consultation</field>
+        <field name="description">Manage access levels for clinic consultation.</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <!-- User Groups -->
+    <!-- 1. Receptionist -->
+    <record id="group_consultation_receptionist" model="res.groups">
+        <field name="name">Receptionist</field>
+        <field name="category_id" ref="module_category_consultation"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <!-- 2. Doctor -->
+    <record id="group_consultation_doctor" model="res.groups">
+        <field name="name">Doctor</field>
+        <field name="category_id" ref="module_category_consultation"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <!-- 3. Manager -->
+    <record id="group_consultation_manager" model="res.groups">
+        <field name="name">Manager</field>
+        <field name="category_id" ref="module_category_consultation"/>
+        <field name="implied_ids" eval="[(4, ref('group_consultation_receptionist')), (4, ref('group_consultation_doctor'))]"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+
+    <!-- Record Rules -->
+    <data noupdate="1">
+
+        <!-- Patient Rules -->
+        <!-- Doctor: Can only see their assigned patients -->
+        <record id="consultation_patient_doctor_rule" model="ir.rule">
+            <field name="name">Doctor: Assigned Patients Only</field>
+            <field name="model_id" ref="model_consultation_patient"/>
+            <field name="domain_force">['|', ('doctor_id.user_id', '=', user.id), ('appointment_ids.doctor_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_consultation_doctor'))]"/>
+        </record>
+
+        <!-- Receptionist: Can see all patients -->
+        <record id="consultation_patient_receptionist_rule" model="ir.rule">
+            <field name="name">Receptionist: All Patients</field>
+            <field name="model_id" ref="model_consultation_patient"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_consultation_receptionist'))]"/>
+        </record>
+
+        <!-- Manager: Can see all patients -->
+        <record id="consultation_patient_manager_rule" model="ir.rule">
+            <field name="name">Manager: All Patients</field>
+            <field name="model_id" ref="model_consultation_patient"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_consultation_manager'))]"/>
+        </record>
+
+        <!-- Appointment Rules -->
+        <!-- Doctor: Can only see their own appointments -->
+        <record id="consultation_appointment_doctor_rule" model="ir.rule">
+            <field name="name">Doctor: Own Appointments Only</field>
+            <field name="model_id" ref="model_consultation_appointment"/>
+            <field name="domain_force">[('doctor_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_consultation_doctor'))]"/>
+        </record>
+
+        <!-- Receptionist: Can see all appointments -->
+        <record id="consultation_appointment_receptionist_rule" model="ir.rule">
+            <field name="name">Receptionist: All Appointments</field>
+            <field name="model_id" ref="model_consultation_appointment"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_consultation_receptionist'))]"/>
+        </record>
+
+        <!-- Manager: Can see all appointments -->
+        <record id="consultation_appointment_manager_rule" model="ir.rule">
+            <field name="name">Manager: All Appointments</field>
+            <field name="model_id" ref="model_consultation_appointment"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_consultation_manager'))]"/>
+        </record>
+
+    </data>
+
+</odoo>

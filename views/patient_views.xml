@@ -24,6 +24,7 @@
                             <field name="dob"/>
                             <field name="age"/>
                             <field name="blood_group"/>
+                            <field name="doctor_id"/>
                         </group>
                         <group string="Contact Details">
                             <field name="phone"/>
@@ -53,6 +54,7 @@
                 <field name="age"/>
                 <field name="phone"/>
                 <field name="blood_group"/>
+                <field name="doctor_id"/>
             </tree>
         </field>
     </record>
