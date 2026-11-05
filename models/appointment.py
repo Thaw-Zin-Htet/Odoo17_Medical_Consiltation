@@ -63,3 +63,46 @@ class Appointment(models.Model):
             self.meeting_url = f"https://meet.jit.si/ClinicConsultation-{unique_token}"
         elif self.consultation_type != 'video_call':
             self.meeting_url = False
+
+    # Business Logic: Automatically set the department based on the selected doctor
+    @api.onchange('doctor_id')
+    def _onchange_doctor_id(self):
+        if self.doctor_id:
+            self.department_id=self.doctor_id.department_id
+
+    # Business Logic:Overlapping Prevention
+    @api.constrains('doctor_id', 'appointment_date','state')
+    def _check_overlapping_appointments(self):
+        for appointment in self:
+            if appointment.appointment_date and appointment.doctor_id and appointment.state != 'cancelled':
+                overlapping_appointments = self.env['consultation.appointment'].search([
+                    ('doctor_id', '=', appointment.doctor_id.id),
+                    ('appointment_date', '=', appointment.appointment_date),
+                    ('id', '!=', appointment.id),
+                    ('state', '!=', 'cancelled')
+                ])
+                if overlapping_appointments:
+                    raise models.ValidationError(f"The selected doctor ({appointment.doctor_id.name}) already has an appointment scheduled at {appointment.appointment_date}. Please choose a different time or doctor.")
+    
+    # Business Logic: No Past-Date Appointments
+    @api.constrains('appointment_date')
+    def _check_past_date_appointments(self):
+        for appointment in self:
+            if appointment.appointment_date < fields.Datetime.now():
+                raise models.ValidationError("You cannot schedule an appointment in the past. Please choose a future date and time.")
+
+    # Business Logic:Department Consistency
+    @api.constrains('doctor_id', 'department_id')
+    def _check_department_consistency(self):
+        for appointment in self:
+            if appointment.doctor_id and appointment.department_id:
+                if appointment.doctor_id.department_id != appointment.department_id:
+                    raise models.ValidationError(f"The selected doctor ({appointment.doctor_id.name}) does not belong to the selected department ({appointment.department_id.name}). Please select a valid department for the doctor.")
+
+    # Business Logic: after one day of the appointment, the status should automatically change to 'done'
+    @api.model
+    def _cron_update_appointment_status(self):
+        appointments = self.search([('state', '=', 'confirmed')])
+        for appointment in appointments:
+            if appointment.appointment_date and appointment.appointment_date < fields.Datetime.now() - timedelta(days=1):
+                appointment.state = 'done' 
