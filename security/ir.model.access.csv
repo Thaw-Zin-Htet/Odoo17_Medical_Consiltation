@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_consultation_patient,consultation.patient,model_consultation_patient,base.group_user,1,1,1,1
+access_consultation_department,consultation.department,model_consultation_department,base.group_user,1,1,1,1
+access_consultation_doctor,consultation.doctor,model_consultation_doctor,base.group_user,1,1,1,1
+access_consultation_appointment,consultation.appointment,model_consultation_appointment,base.group_user,1,1,1,1
