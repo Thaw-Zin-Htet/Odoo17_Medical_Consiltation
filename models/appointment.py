@@ -12,6 +12,7 @@ class Appointment(models.Model):
     doctor_id = fields.Many2one('consultation.doctor', string='Doctor', required=True, tracking=True)
     department_id = fields.Many2one('consultation.department', string='Department', required=True, tracking=True)
     appointment_date = fields.Datetime(string='Appointment Date', required=True, tracking=True)
+    invoice_id = fields.Many2one('account.move', string='Invoice', tracking=True)
 
     consultation_type = fields.Selection([
         ('in_person', 'In Person'),
@@ -64,6 +65,62 @@ class Appointment(models.Model):
             self.meeting_url = f"https://meet.jit.si/ClinicConsultation-{unique_token}"
         elif self.consultation_type != 'video_call':
             self.meeting_url = False
+
+    # Invoice Generation: Create an invoice for the appointment
+    def create_invoice(self):
+        self.ensure_one()
+        if self.invoice_id:
+            raise ValidationError("An invoice has already been created for this appointment.")
+        
+        # Ensure patient has a res.partner record to attach the invoice
+        partner = getattr(self.patient_id, 'partner_id', None)
+        if not partner:
+            partner = self.env['res.partner'].create({
+                'name':self.patient_id.name,
+                'phone':getattr(self.patient_id, 'phone', False),
+                'email':self.patient_id.email,
+            })
+        
+        # Programically create an customer invoice 
+        invoice_vals ={
+            'move_type': 'out_invoice',
+            'partner_id': partner.id,
+            'invoice_line_ids': [(0, 0, {
+                'name': f'Consultation witn Dr. {self.doctor_id.name} on {self.appointment_date}',
+                'quantity': 1,
+                'price_unit': self.doctor_id.consultation_fee,
+            })],
+        }
+
+        invoice = self.env['account.move'].create(invoice_vals)
+        self.invoice_id = invoice.id
+
+        # Return action window to open the created invoice in form view
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Customer Invoice',
+            'res_model': 'account.move',
+            'view_mode': 'form',
+            'res_id': invoice.id,
+            'target': 'current',
+        }
+
+    # action view invoice: Open the invoice related to the appointment
+    def action_view_invoice(self):
+        self.ensure_one()
+        if not self.invoice_id:
+            raise ValidationError("No invoice has been created for this appointment.")
+        else:
+            return {
+                'type': 'ir.actions.act_window',
+                'name': 'Customer Invoice',
+                'res_model': 'account.move',
+                'view_mode': 'form',
+                'res_id': self.invoice_id.id,
+                'target': 'current',
+            }
+
+
 
     # Business Logic: Automatically set the department based on the selected doctor
     @api.onchange('doctor_id')

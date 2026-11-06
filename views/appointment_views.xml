@@ -12,9 +12,19 @@
                     <button name="action_done" string="Mark as Done" type="object" class="oe_highlight" invisible="state != 'confirmed'"/>
                     <button name="action_cancel" string="Cancel" type="object" invisible="state in ('done', 'cancelled')"/>
                     <button name="action_draft" string="Reset to Draft" type="object" invisible="state != 'cancelled'"/>
+
+                    <!-- New Button For Invoice Generation -->
+                    <button name="create_invoice" string="Generate Invoice" type="object" class="oe_highlight" invisible="state != 'done' or invoice_id"/>
+
                     <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,done" options="{'clickable': '1'}"/>
                 </header>
                 <sheet>
+                    <!-- New: Smart Button Box to link to accounting -->
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_invoice" type="object" class="oe_stat_button" icon="fa-file-invoice" invisible="not invoice_id">
+                            <field name="invoice_id" widget="statinfo" string="Invoice"/>
+                        </button>
+                    </div>
                     <div class="oe_title">
                         <h1>
                             <field name="name" readonly="1"/>
