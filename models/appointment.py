@@ -1,6 +1,7 @@
 import uuid
 from datetime import timedelta
 from odoo import models, fields, api
+from odoo.exceptions import ValidationError
 
 class Appointment(models.Model):
     _name = 'consultation.appointment'
@@ -13,6 +14,7 @@ class Appointment(models.Model):
     department_id = fields.Many2one('consultation.department', string='Department', required=True, tracking=True)
     appointment_date = fields.Datetime(string='Appointment Date', required=True, tracking=True)
     invoice_id = fields.Many2one('account.move', string='Invoice', tracking=True)
+    prescription_line_ids = fields.One2many('consultation.prescription.line', 'appointment_id', string='Prescription Lines', tracking=True)
 
     consultation_type = fields.Selection([
         ('in_person', 'In Person'),

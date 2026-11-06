@@ -21,7 +21,7 @@
                 <sheet>
                     <!-- New: Smart Button Box to link to accounting -->
                     <div class="oe_button_box" name="button_box">
-                        <button name="action_view_invoice" type="object" class="oe_stat_button" icon="fa-file-invoice" invisible="not invoice_id">
+                        <button name="action_view_invoice" type="object" class="oe_stat_button" icon="fa-pencil-square-o" invisible="not invoice_id">
                             <field name="invoice_id" widget="statinfo" string="Invoice"/>
                         </button>
                     </div>
@@ -43,6 +43,19 @@
                             <field name="meeting_url" widget="url" invisible="consultation_type != 'video_call'"/>
                         </group>
                     </group>
+                    <notebook>
+                        <page string="Prescription &amp; Treatments">
+                            <field name="prescription_line_ids">
+                                <tree editable="bottom">
+                                    <field name="medicine_name"/>
+                                    <field name="dosage"/>
+                                    <field name="frequency"/>
+                                    <field name="duration_days"/>
+                                    <field name="notes"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
                 </sheet>
                 <div class="oe_chatter">
                     <field name="message_follower_ids"/>
